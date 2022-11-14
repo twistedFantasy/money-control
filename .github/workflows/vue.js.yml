@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -27,7 +30,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: |
-          leprechaun/frontend/node_modules
+          node_modules
         key: ${{ runner.os }}-vuejs-money-site-build-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-vuejs-money-site-build-
