@@ -57,5 +57,9 @@ jobs:
 
     - name: Copy files to the test website with the AWS CLI
       run: |
+        ls -al
+        ls -al dist/
+        echo "${{ secrets.AWS_S3_STATIC_WEBSITE_BUCKET }}"
+        echo "${{ secrets.AWS_ACCESS_KEY_ID }}"
         aws s3 sync dist/ s3://secrets.AWS_S3_STATIC_WEBSITE_BUCKET
         aws s3 cp dist/index.html s3://secrets.AWS_S3_STATIC_WEBSITE_BUCKET/index.html --metadata-directive REPLACE --cache-control no-cache,no-store,must-revalidate,max-age=0 --content-type text/html
