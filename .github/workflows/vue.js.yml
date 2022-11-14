@@ -32,18 +32,22 @@ jobs:
       with:
         node-version: 18.x
 
-    - name: Install dependencies
-      run: npm install
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: |
+        echo "::set-output name=dir::$(npm config get cache)"
 
     - name: Caching Vue.js
-      id: vuejs-cache-build
+      id: npm-cache
       uses: actions/cache@v3
       with:
-        path: |
-          node_modules
-        key: ${{ runner.os }}-vuejs-money-site-build-${{ github.run_id }}
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-vuejs-money-site-build-
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      run: npm install
 
     - name: Run Lint
       run: npm run lint
