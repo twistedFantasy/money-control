@@ -4,8 +4,6 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
 
 jobs:
   build-and-deploy:
@@ -32,16 +30,10 @@ jobs:
       with:
         node-version: 18.x
 
-    - name: Get npm cache directory
-      id: npm-cache-dir
-      run: |
-        echo "::set-output name=dir::$(npm config get cache)"
-
-    - name: Caching Vue.js
-      id: npm-cache
+    - name: node_modules caching
       uses: actions/cache@v3
       with:
-        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
@@ -57,5 +49,5 @@ jobs:
 
     - name: Copy files to the test website with the AWS CLI
       run: |
-        aws s3 sync dist/ "s3://${{ secrets.AWS_S3_STATIC_WEBSITE_BUCKET }}"
+        aws s3 sync dist/ "s3://${{ secrets.AWS_S3_STATIC_WEBSITE_BUCKET }}" --delete
         aws s3 cp dist/index.html "s3://${{ secrets.AWS_S3_STATIC_WEBSITE_BUCKET }}/index.html" --metadata-directive REPLACE --cache-control no-cache,no-store,must-revalidate,max-age=0 --content-type text/html
